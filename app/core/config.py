@@ -22,8 +22,10 @@ def setup_kaggle_credentials():
                 pass
             
             os.environ['KAGGLE_CONFIG_DIR'] = kaggle_dir
-            print("✅ Kaggle credentials configured from environment")
+            print(f"✅ Kaggle credentials configured for user: {username}")
         except Exception as e:
             print(f"⚠️ Failed to setup Kaggle credentials: {e}")
     else:
         print("⚠️ KAGGLE_USERNAME and KAGGLE_KEY not set")
+        print(f"  Username: {'SET' if username else 'MISSING'}")
+        print(f"  Key: {'SET' if key else 'MISSING'}")
