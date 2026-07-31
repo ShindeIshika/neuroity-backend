@@ -27,19 +27,14 @@ function App() {
     if (filters.filetype) url += `&filetype=${filters.filetype}`;
     if (filters.domain) url += `&domain=${filters.domain}`;
 
-    console.log('🔍 Searching:', url);
-
     try {
       const res = await fetch(url);
       const data = await res.json();
-      console.log('📊 Data:', data);
       if (data.success) {
         setResults(data.results || []);
-      } else {
-        console.error('API error:', data);
       }
     } catch (err) {
-      console.error('❌ Fetch error:', err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -50,7 +45,6 @@ function App() {
     search(0);
   };
 
-  // ─── Helper: Format file size ───
   const formatSize = (bytes) => {
     if (!bytes || bytes === 0) return '—';
     if (bytes >= 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
@@ -59,7 +53,6 @@ function App() {
     return `${bytes} B`;
   };
 
-  // ─── Helper: Format samples ───
   const formatSamples = (num) => {
     if (!num || num === 0) return '—';
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
@@ -67,7 +60,6 @@ function App() {
     return num.toString();
   };
 
-  // ─── Helper: Clean up tags ───
   const cleanTag = (tag) => {
     const map = {
       'size_categories:n<1K': 'Small',
@@ -97,13 +89,11 @@ function App() {
     return map[tag] || tag.replace(/_/g, ' ').replace(/:/g, ': ');
   };
 
-  // ─── Helper: Get license display ───
   const getLicenseDisplay = (license) => {
     if (!license || license === 'Unknown' || license === 'N/A') return '—';
     return license;
   };
 
-  // ─── Helper: Get quality score ───
   const getQuality = (ds) => {
     let score = 70;
     if (ds.samples && ds.samples > 1000) score += 10;
@@ -121,9 +111,6 @@ function App() {
         <div className="logo">Neuroity AI</div>
         <nav>
           <a href="#" className="active">Datasets</a>
-          <a href="#">Research</a>
-          <a href="#">API</a>
-          <a href="#">Pricing</a>
         </nav>
       </header>
 
