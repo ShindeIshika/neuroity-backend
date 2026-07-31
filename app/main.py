@@ -1,4 +1,8 @@
 # app/main.py
+from app.core.config import setup_kaggle_credentials
+setup_kaggle_credentials()
+
+# app/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1 import search
