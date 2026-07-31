@@ -14,14 +14,29 @@ class KaggleConnector(BaseConnector):
         try:
             from kaggle.api.kaggle_api_extended import KaggleApi
             
-            # Make sure config dir is set
+            # 🔥 HARDCODE CREDENTIALS HERE (TEMPORARY)
+            import json
             kaggle_dir = os.path.join(os.path.expanduser('~'), '.kaggle')
+            os.makedirs(kaggle_dir, exist_ok=True)
+            
+            json_path = os.path.join(kaggle_dir, 'kaggle.json')
+            with open(json_path, 'w') as f:
+                json.dump({
+                    "username": "KGAT",
+                    "key": "32d9e621f06055558c70e4201f2c3fcc"
+                }, f)
+            
+            try:
+                os.chmod(json_path, 0o600)
+            except:
+                pass
+            
             os.environ['KAGGLE_CONFIG_DIR'] = kaggle_dir
             
             self.api = KaggleApi()
             self.api.authenticate()
             self.authenticated = True
-            print("✅ Kaggle authenticated successfully")
+            print("✅ Kaggle authenticated successfully (hardcoded)")
         except Exception as e:
             print(f"⚠️ Kaggle auth failed: {e}")
             self.authenticated = False
