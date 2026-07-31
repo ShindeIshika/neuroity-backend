@@ -2,6 +2,7 @@
 from app.connectors.base import BaseConnector
 from typing import List, Dict, Any, Optional
 import asyncio
+import os
 
 class KaggleConnector(BaseConnector):
     """Kaggle API connector"""
@@ -13,36 +14,40 @@ class KaggleConnector(BaseConnector):
         try:
             from kaggle.api.kaggle_api_extended import KaggleApi
             
-            # Hardcode credentials temporarily for testing
-            import os
-            import tempfile
+            # Get credentials from environment
+            username = os.environ.get('KAGGLE_USERNAME')
+            key = os.environ.get('KAGGLE_KEY')
             
-            # Create .kaggle directory
-            kaggle_dir = os.path.join(os.path.expanduser('~'), '.kaggle')
-            os.makedirs(kaggle_dir, exist_ok=True)
-            
-            # Write kaggle.json
-            json_path = os.path.join(kaggle_dir, 'kaggle.json')
-            with open(json_path, 'w') as f:
-                f.write('{"username":"KGAT","key":"32d9e621f06055558c70e4201f2c3fcc"}')
-            
-            # Set permissions (on Render, this might fail silently)
-            try:
-                os.chmod(json_path, 0o600)
-            except:
-                pass
-            
-            os.environ['KAGGLE_CONFIG_DIR'] = kaggle_dir
+            if username and key:
+                # Write kaggle.json from environment variables
+                import json
+                import tempfile
+                
+                kaggle_dir = os.path.join(os.path.expanduser('~'), '.kaggle')
+                os.makedirs(kaggle_dir, exist_ok=True)
+                
+                json_path = os.path.join(kaggle_dir, 'kaggle.json')
+                with open(json_path, 'w') as f:
+                    json.dump({"username": username, "key": key}, f)
+                
+                try:
+                    os.chmod(json_path, 0o600)
+                except:
+                    pass
+                
+                os.environ['KAGGLE_CONFIG_DIR'] = kaggle_dir
             
             self.api = KaggleApi()
             self.api.authenticate()
             self.authenticated = True
-            print("✅ Kaggle authenticated successfully (hardcoded)")
+            print("✅ Kaggle authenticated successfully")
         except Exception as e:
             print(f"⚠️ Kaggle auth failed: {e}")
             self.authenticated = False
             self.api = None
+    
     async def search(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
+        """Search for datasets on Kaggle"""
         if not self.authenticated or not self.api:
             return self._sample_results(query)
         
@@ -56,7 +61,6 @@ class KaggleConnector(BaseConnector):
             datasets = datasets[:limit]
             results = []
             for dataset in datasets:
-                # Clean tags — extract just the names
                 tags = []
                 if hasattr(dataset, 'tags') and dataset.tags:
                     tags = [tag.get('_name', '') for tag in dataset.tags]
@@ -83,6 +87,7 @@ class KaggleConnector(BaseConnector):
             return self._sample_results(query)
     
     async def get_dataset(self, dataset_id: str) -> Optional[Dict[str, Any]]:
+        """Get detailed dataset info"""
         if not self.authenticated or not self.api:
             return None
         
@@ -120,7 +125,7 @@ class KaggleConnector(BaseConnector):
         return [
             {
                 "title": f"Sample: {query} dataset",
-                "description": "Sample Kaggle dataset. Install kaggle package for real data.",
+                "description": "Kaggle credentials not configured. Set KAGGLE_USERNAME and KAGGLE_KEY environment variables.",
                 "source": "kaggle",
                 "license": "MIT",
                 "download_url": "https://www.kaggle.com/datasets/sample",
