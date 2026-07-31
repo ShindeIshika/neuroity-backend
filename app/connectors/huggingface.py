@@ -1,7 +1,6 @@
 # app/connectors/huggingface.py
 from app.connectors.base import BaseConnector
 from typing import List, Dict, Any, Optional
-import asyncio
 import httpx
 
 class HuggingFaceConnector(BaseConnector):
@@ -12,6 +11,7 @@ class HuggingFaceConnector(BaseConnector):
         self.source_name = "huggingface"
         self.base_url = "https://huggingface.co/api"
         self.client = httpx.AsyncClient(timeout=30.0)
+        print("✅ Hugging Face connector ready")
     
     async def search(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
         """Search for datasets on Hugging Face"""
@@ -30,15 +30,15 @@ class HuggingFaceConnector(BaseConnector):
             for item in data[:limit]:
                 results.append({
                     "title": item.get("id", "Unknown"),
-                    "description": item.get("description", "")[:500],
+                    "description": item.get("description", "")[:500] if item.get("description") else "",
                     "source": "huggingface",
                     "license": item.get("license", "Unknown"),
                     "download_url": f"https://huggingface.co/datasets/{item.get('id')}",
                     "source_url": f"https://huggingface.co/datasets/{item.get('id')}",
                     "file_type": "dataset",
                     "tags": item.get("tags", []),
-                    "size": 0,
-                    "samples": 0,
+                    "size": item.get("size", 0),
+                    "samples": item.get("samples", 0),
                     "features": 0,
                     "last_updated": item.get("lastModified", "")
                 })
@@ -59,7 +59,7 @@ class HuggingFaceConnector(BaseConnector):
             
             return {
                 "title": data.get("id", "Unknown"),
-                "description": data.get("description", "")[:500],
+                "description": data.get("description", "")[:500] if data.get("description") else "",
                 "source": "huggingface",
                 "license": data.get("license", "Unknown"),
                 "download_url": f"https://huggingface.co/datasets/{data.get('id')}",
@@ -77,11 +77,10 @@ class HuggingFaceConnector(BaseConnector):
             return None
     
     def _sample_results(self, query: str) -> List[Dict[str, Any]]:
-        """Return sample data when API is not available"""
         return [
             {
                 "title": f"Sample HF: {query}",
-                "description": "Hugging Face dataset sample",
+                "description": "Hugging Face dataset sample. Install huggingface_hub for real data.",
                 "source": "huggingface",
                 "license": "MIT",
                 "download_url": "https://huggingface.co/datasets/sample",
@@ -91,6 +90,6 @@ class HuggingFaceConnector(BaseConnector):
                 "size": 0,
                 "samples": 0,
                 "features": 0,
-                "last_updated": "2026-01-01"
+                "last_updated": ""
             }
         ]
