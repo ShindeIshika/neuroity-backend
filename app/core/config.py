@@ -1,27 +1,29 @@
 # app/core/config.py
 import os
 import json
-import tempfile
 
 def setup_kaggle_credentials():
-    """Set up Kaggle credentials from environment variable"""
-    kaggle_json = os.environ.get('KAGGLE_JSON')
-    if kaggle_json:
+    """Set up Kaggle credentials from environment variables"""
+    username = os.environ.get('KAGGLE_USERNAME')
+    key = os.environ.get('KAGGLE_KEY')
+    
+    if username and key:
         try:
-            # Create .kaggle directory
-            kaggle_dir = os.path.expanduser('~/.kaggle')
+            kaggle_dir = os.path.join(os.path.expanduser('~'), '.kaggle')
             os.makedirs(kaggle_dir, exist_ok=True)
             
-            # Write kaggle.json
             json_path = os.path.join(kaggle_dir, 'kaggle.json')
             with open(json_path, 'w') as f:
-                f.write(kaggle_json)
+                json.dump({"username": username, "key": key}, f)
             
-            # Set permissions (Linux/macOS only)
-            os.chmod(json_path, 0o600)
+            try:
+                os.chmod(json_path, 0o600)
+            except:
+                pass
             
-            # Set environment variable
             os.environ['KAGGLE_CONFIG_DIR'] = kaggle_dir
             print("✅ Kaggle credentials configured from environment")
         except Exception as e:
             print(f"⚠️ Failed to setup Kaggle credentials: {e}")
+    else:
+        print("⚠️ KAGGLE_USERNAME and KAGGLE_KEY not set")
