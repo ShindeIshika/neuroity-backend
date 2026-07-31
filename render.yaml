@@ -1,0 +1,12 @@
+# render.yaml
+services:
+  - type: web
+    name: neuroity-backend
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: KAGGLE_CONFIG_DIR
+        value: /etc/secrets/.kaggle
