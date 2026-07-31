@@ -12,15 +12,36 @@ class KaggleConnector(BaseConnector):
         
         try:
             from kaggle.api.kaggle_api_extended import KaggleApi
+            
+            # Hardcode credentials temporarily for testing
+            import os
+            import tempfile
+            
+            # Create .kaggle directory
+            kaggle_dir = os.path.join(os.path.expanduser('~'), '.kaggle')
+            os.makedirs(kaggle_dir, exist_ok=True)
+            
+            # Write kaggle.json
+            json_path = os.path.join(kaggle_dir, 'kaggle.json')
+            with open(json_path, 'w') as f:
+                f.write('{"username":"KGAT","key":"32d9e621f06055558c70e4201f2c3fcc"}')
+            
+            # Set permissions (on Render, this might fail silently)
+            try:
+                os.chmod(json_path, 0o600)
+            except:
+                pass
+            
+            os.environ['KAGGLE_CONFIG_DIR'] = kaggle_dir
+            
             self.api = KaggleApi()
             self.api.authenticate()
             self.authenticated = True
-            print("✅ Kaggle authenticated successfully")
+            print("✅ Kaggle authenticated successfully (hardcoded)")
         except Exception as e:
             print(f"⚠️ Kaggle auth failed: {e}")
             self.authenticated = False
             self.api = None
-    
     async def search(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
         if not self.authenticated or not self.api:
             return self._sample_results(query)
