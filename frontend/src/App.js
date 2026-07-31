@@ -27,14 +27,19 @@ function App() {
     if (filters.filetype) url += `&filetype=${filters.filetype}`;
     if (filters.domain) url += `&domain=${filters.domain}`;
 
+    console.log('🔍 Searching:', url);
+
     try {
       const res = await fetch(url);
       const data = await res.json();
+      console.log('📊 Data:', data);
       if (data.success) {
         setResults(data.results || []);
+      } else {
+        console.error('API error:', data);
       }
     } catch (err) {
-      console.error(err);
+      console.error('❌ Fetch error:', err);
     } finally {
       setLoading(false);
     }
@@ -98,7 +103,7 @@ function App() {
     return license;
   };
 
-  // ─── Helper: Get quality score (calculate from available data) ───
+  // ─── Helper: Get quality score ───
   const getQuality = (ds) => {
     let score = 70;
     if (ds.samples && ds.samples > 1000) score += 10;
@@ -120,7 +125,6 @@ function App() {
           <a href="#">API</a>
           <a href="#">Pricing</a>
         </nav>
-        <button className="sign-in">Sign In</button>
       </header>
 
       {/* ─── HERO ─── */}
