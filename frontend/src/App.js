@@ -181,7 +181,7 @@ function App() {
       {/* ─── HERO ─── */}
       <main>
         <div className="hero">
-          <h1>One search. Every dataset.</h1>
+          <h1>Discover Data, Build Intelligence.</h1>
         </div>
 
         {/* ─── SEARCH BAR ─── */}
