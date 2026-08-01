@@ -709,46 +709,76 @@ main { flex: 1; display: flex; flex-direction: column; }
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 20px;
-  max-width: 320px;
+  padding: 24px 28px 20px;
+  max-width: 520px;
+  min-width: 280px;
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow-widget);
   z-index: 100;
-  transition: all var(--transition-slow);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  will-change: transform;
+  touch-action: none;
 }
 
 .ai-widget:hover {
   border-color: var(--border-hover);
-  transform: translateY(-2px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
 }
 
+/* ─── DRAG HEADER ─── */
 .ai-widget-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 10px;
+  margin-bottom: 10px;
+  cursor: grab;
+  user-select: none;
+}
+
+.ai-widget-header:active {
+  cursor: grabbing;
+}
+
+/* ─── RESIZE HANDLE ─── */
+.ai-resize-handle {
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  width: 24px;
+  height: 24px;
+  cursor: nw-resize;
+  color: rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.ai-resize-handle:hover {
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .ai-icon { display: flex; align-items: center; }
-.ai-icon svg { width: 16px; height: 16px; stroke: #ffffff; }
+.ai-icon svg { width: 18px; height: 18px; stroke: #ffffff; }
 
 .ai-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   color: #ffffff;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   background: rgba(255, 255, 255, 0.08);
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: var(--radius-full);
 }
 
 .ai-text {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.7);
-  line-height: 1.5;
-  margin-bottom: 10px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin-bottom: 14px;
 }
 
 .ai-input {
@@ -757,14 +787,13 @@ main { flex: 1; display: flex; flex-direction: column; }
   background: var(--surface-3);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  gap: 8px;
-  transition: all var(--transition);
+  padding: 12px 16px;
+  gap: 10px;
+  transition: border-color 0.3s;
 }
 
 .ai-input:focus-within {
   border-color: var(--border-hover);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
 .ai-input input {
@@ -773,25 +802,56 @@ main { flex: 1; display: flex; flex-direction: column; }
   outline: none;
   background: transparent;
   color: var(--text);
-  font-size: 13px;
+  font-size: 14px;
 }
 
-.ai-input input::placeholder { color: rgba(255, 255, 255, 0.3); }
+.ai-input input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 13px;
+}
 
 .ai-arrow {
   display: flex;
   align-items: center;
   color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  transition: all var(--transition);
+  transition: color 0.2s;
 }
 
 .ai-arrow:hover {
   color: rgba(255, 255, 255, 0.6);
 }
 
-.ai-arrow svg { width: 14px; height: 14px; stroke: rgba(255, 255, 255, 0.3); }
+.ai-arrow svg { width: 18px; height: 18px; stroke: rgba(255, 255, 255, 0.3); }
 
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .ai-widget {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    width: auto !important;
+    max-width: none !important;
+    min-width: auto !important;
+    padding: 16px 18px 14px;
+  }
+
+  .ai-text {
+    font-size: 14px;
+  }
+
+  .ai-input {
+    padding: 10px 14px;
+  }
+
+  .ai-input input {
+    font-size: 13px;
+  }
+
+  .ai-resize-handle {
+    display: none;
+  }
+}
 /* ─── FOOTER ─── */
 footer {
   width: 100%;
@@ -976,4 +1036,245 @@ footer .container {
 .loading-overlay .loading {
   color: var(--text);
   font-size: 16px;
+}
+
+/* ─── MOBILE OPTIMIZATION ─── */
+@media (max-width: 768px) {
+  /* Hero */
+  .hero {
+    padding: 30px 0 16px !important;
+  }
+
+  .hero h1 {
+    font-size: 24px !important;
+    line-height: 1.2 !important;
+    padding: 0 12px !important;
+  }
+
+  /* Search Bar */
+  .search-wrapper {
+    max-width: 100% !important;
+    padding: 0 12px !important;
+  }
+
+  .search-bar {
+    height: 48px !important;
+    border-radius: 24px !important;
+    padding: 0 12px !important;
+    gap: 8px !important;
+  }
+
+  .search-bar input {
+    font-size: 14px !important;
+  }
+
+  .search-bar input::placeholder {
+    font-size: 12px !important;
+  }
+
+  .search-bar button {
+    width: auto !important;
+    height: 36px !important;
+    padding: 0 14px !important;
+    font-size: 13px !important;
+    min-width: 80px !important;
+  }
+
+  .search-bar button svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .search-icon svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* AI Tag */
+  .ai-tag {
+    margin: 8px 0 16px !important;
+  }
+
+  .ai-tag span {
+    font-size: 10px !important;
+    padding: 4px 12px !important;
+  }
+
+  /* Filters */
+  .filters-container {
+    padding: 12px 14px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .filters {
+    gap: 8px !important;
+  }
+
+  .filter-group {
+    min-width: 100% !important;
+  }
+
+  .filter-group label {
+    font-size: 10px !important;
+  }
+
+  .filter-group select,
+  .filter-group input {
+    height: 32px !important;
+    font-size: 12px !important;
+    padding: 0 10px !important;
+  }
+
+  .apply-btn {
+    height: 32px !important;
+    font-size: 12px !important;
+    padding: 0 16px !important;
+    width: 100% !important;
+  }
+
+  /* Result Count */
+  .result-count {
+    font-size: 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  /* Cards */
+  .results-grid {
+    gap: 12px !important;
+  }
+
+  .result-card {
+    padding: 14px !important;
+  }
+
+  .card-top {
+    margin-bottom: 8px !important;
+  }
+
+  .quality {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+  }
+
+  .quality .dot {
+    width: 4px !important;
+    height: 4px !important;
+  }
+
+  .license {
+    font-size: 10px !important;
+    padding: 4px 8px !important;
+  }
+
+  .card-title {
+    font-size: 16px !important;
+    line-height: 1.3 !important;
+  }
+
+  .card-description {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .file-tags {
+    gap: 4px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .file-tag {
+    font-size: 10px !important;
+    height: 20px !important;
+    padding: 2px 8px !important;
+  }
+
+  .card-divider {
+    margin: 8px 0 10px !important;
+  }
+
+  .card-meta {
+    gap: 16px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .meta-label {
+    font-size: 9px !important;
+  }
+
+  .meta-value {
+    font-size: 18px !important;
+  }
+
+  .card-buttons {
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  .card-buttons button {
+    height: 38px !important;
+    font-size: 12px !important;
+  }
+
+  /* Empty State */
+  .empty-state {
+    padding: 30px 16px !important;
+  }
+
+  .empty-state h3 {
+    font-size: 16px !important;
+  }
+
+  .empty-state p {
+    font-size: 13px !important;
+  }
+
+  /* Footer */
+  footer .container {
+    flex-direction: column !important;
+    text-align: center !important;
+    height: auto !important;
+    padding: 16px 0 !important;
+    gap: 8px !important;
+  }
+
+  .footer-logo {
+    font-size: 12px !important;
+  }
+
+  .footer-left p {
+    font-size: 11px !important;
+  }
+
+  .footer-right {
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+  }
+
+  .footer-right a {
+    font-size: 11px !important;
+  }
+
+  /* AI Widget - hide on mobile */
+  .ai-widget {
+    display: none !important;
+  }
+
+  /* Provider Summary */
+  .provider-summary {
+    padding: 12px 14px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .provider-summary-title {
+    font-size: 12px !important;
+  }
+
+  .provider-summary-count {
+    font-size: 11px !important;
+  }
+
+  .provider-item {
+    font-size: 11px !important;
+  }
 }

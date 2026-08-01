@@ -256,6 +256,13 @@ function App() {
   const inputRef = useRef(null);
   const isFirstLoad = useRef(true);
 
+  // ─── AI WIDGET STATE ───
+  const widgetRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [widgetPos, setWidgetPos] = useState({ x: 0, y: 0 });
+  const [widgetWidth, setWidgetWidth] = useState(380);
+
   useEffect(() => {
     if (isFirstLoad.current) {
       isFirstLoad.current = false;
@@ -277,6 +284,59 @@ function App() {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, []);
+
+  // ─── SMOOTH DRAG HANDLERS ───
+  const handleDragStart = (e) => {
+    if (!e.target.closest('.ai-widget-header')) return;
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - widgetPos.x,
+      y: e.clientY - widgetPos.y
+    });
+  };
+
+  const handleDragMove = useCallback((e) => {
+    if (!isDragging) return;
+    setWidgetPos({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
+  }, [isDragging, dragStart]);
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  // ─── RESIZE HANDLER ───
+  const handleResizeStart = (e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startWidth = widgetWidth;
+
+    const onResize = (ev) => {
+      const newWidth = Math.min(520, Math.max(280, startWidth + (ev.clientX - startX)));
+      setWidgetWidth(newWidth);
+    };
+
+    const onResizeEnd = () => {
+      document.removeEventListener('mousemove', onResize);
+      document.removeEventListener('mouseup', onResizeEnd);
+    };
+
+    document.addEventListener('mousemove', onResize);
+    document.addEventListener('mouseup', onResizeEnd);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleDragMove);
+      document.addEventListener('mouseup', handleDragEnd);
+      return () => {
+        document.removeEventListener('mousemove', handleDragMove);
+        document.removeEventListener('mouseup', handleDragEnd);
+      };
+    }
+  }, [isDragging, handleDragMove]);
 
   const search = useCallback(async (offset = 0) => {
     if (!query.trim()) return;
@@ -457,9 +517,18 @@ function App() {
         </div>
       </main>
 
-      {/* ─── FLOATING AI WIDGET ─── */}
-      <div className="ai-widget">
-        <div className="ai-widget-header">
+      {/* ─── SMOOTH DRAGGABLE & RESIZABLE AI WIDGET ─── */}
+      <div
+        ref={widgetRef}
+        className="ai-widget"
+        style={{
+          width: widgetWidth + 'px',
+          transform: `translate(${widgetPos.x}px, ${widgetPos.y}px)`,
+          transition: isDragging ? 'none' : 'transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          cursor: isDragging ? 'grabbing' : 'default'
+        }}
+      >
+        <div className="ai-widget-header" onMouseDown={handleDragStart}>
           <span className="ai-icon"><AIStarIcon /></span>
           <span className="ai-label">NEURO AI</span>
         </div>
@@ -470,6 +539,9 @@ function App() {
         <div className="ai-input">
           <input type="text" placeholder="I need 10k images of..." />
           <span className="ai-arrow"><ArrowIcon /></span>
+        </div>
+        <div className="ai-resize-handle" onMouseDown={handleResizeStart}>
+          ↕
         </div>
       </div>
 
