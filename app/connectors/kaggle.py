@@ -3,42 +3,54 @@ from app.connectors.base import BaseConnector
 from typing import List, Dict, Any, Optional
 import asyncio
 import os
-import json
-import tempfile
+import traceback
 
 class KaggleConnector(BaseConnector):
-    """Kaggle API connector"""
+    """Kaggle API connector using environment variables only"""
     
     def __init__(self):
         super().__init__()
         self.source_name = "kaggle"
+        self.api = None
+        self.authenticated = False
+        
+        # Don't authenticate here — do it lazily
+        print("✅ Kaggle connector initialized (lazy auth)")
+    
+    def _authenticate(self):
+        """Authenticate using environment variables KAGGLE_USERNAME and KAGGLE_KEY"""
+        if self.authenticated and self.api:
+            return True
         
         try:
             from kaggle.api.kaggle_api_extended import KaggleApi
             
-            # Use temp directory for credentials
-            temp_dir = tempfile.mkdtemp()
-            os.environ['KAGGLE_CONFIG_DIR'] = temp_dir
+            # Check if environment variables exist
+            username = os.environ.get('KAGGLE_USERNAME')
+            key = os.environ.get('KAGGLE_KEY')
             
-            json_path = os.path.join(temp_dir, 'kaggle.json')
-            with open(json_path, 'w') as f:
-                json.dump({
-                    "username": "KGAT",
-                    "key": "32d9e621f06055558c70e4201f2c3fcc"
-                }, f)
+            if not username or not key:
+                print("⚠️ KAGGLE_USERNAME or KAGGLE_KEY not set in environment")
+                return False
+            
+            print(f"✅ Using Kaggle credentials from environment (username: {username})")
             
             self.api = KaggleApi()
             self.api.authenticate()
             self.authenticated = True
-            print("✅ Kaggle authenticated successfully (temp dir)")
+            print("✅ Kaggle authenticated successfully")
+            return True
+            
         except Exception as e:
             print(f"⚠️ Kaggle auth failed: {e}")
+            traceback.print_exc()
             self.authenticated = False
             self.api = None
+            return False
     
     async def search(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
         """Search for datasets on Kaggle"""
-        if not self.authenticated or not self.api:
+        if not self._authenticate():
             return self._sample_results(query)
         
         try:
@@ -51,7 +63,6 @@ class KaggleConnector(BaseConnector):
             datasets = datasets[:limit]
             results = []
             for dataset in datasets:
-                # Handle tags safely
                 tags = []
                 if hasattr(dataset, 'tags'):
                     if isinstance(dataset.tags, list):
@@ -61,7 +72,6 @@ class KaggleConnector(BaseConnector):
                             elif isinstance(tag, dict):
                                 tags.append(tag.get('_name', ''))
                 
-                # Get ref/id safely
                 ref = getattr(dataset, 'ref', None)
                 if not ref:
                     ref = getattr(dataset, 'id', None)
@@ -87,10 +97,11 @@ class KaggleConnector(BaseConnector):
             
         except Exception as e:
             print(f"Kaggle search error: {e}")
+            traceback.print_exc()
             return self._sample_results(query)
     
     async def get_dataset(self, dataset_id: str) -> Optional[Dict[str, Any]]:
-        if not self.authenticated or not self.api:
+        if not self._authenticate():
             return None
         
         try:
@@ -109,7 +120,6 @@ class KaggleConnector(BaseConnector):
                         elif isinstance(tag, dict):
                             tags.append(tag.get('_name', ''))
             
-            # Get ref/id safely
             ref = getattr(dataset, 'ref', None)
             if not ref:
                 ref = getattr(dataset, 'id', None)
@@ -133,13 +143,14 @@ class KaggleConnector(BaseConnector):
             
         except Exception as e:
             print(f"Kaggle get error: {e}")
+            traceback.print_exc()
             return None
     
     def _sample_results(self, query: str) -> List[Dict[str, Any]]:
         return [
             {
                 "title": f"Sample: {query} dataset",
-                "description": "Kaggle credentials not configured.",
+                "description": "Kaggle authentication failed. Check logs for details.",
                 "source": "kaggle",
                 "license": "MIT",
                 "download_url": "https://www.kaggle.com/datasets/sample",
