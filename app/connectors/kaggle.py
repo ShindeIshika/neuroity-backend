@@ -3,6 +3,8 @@ from app.connectors.base import BaseConnector
 from typing import List, Dict, Any, Optional
 import asyncio
 import os
+import json
+import tempfile
 
 class KaggleConnector(BaseConnector):
     """Kaggle API connector"""
@@ -14,17 +16,10 @@ class KaggleConnector(BaseConnector):
         try:
             from kaggle.api.kaggle_api_extended import KaggleApi
             
-            # 🔥 Use environment variables for credentials
-            os.environ['KAGGLE_USERNAME'] = "KGAT"
-            os.environ['KAGGLE_KEY'] = "32d9e621f06055558c70e4201f2c3fcc"
-            
-            # Alternative: Try to write to a temp directory
-            import tempfile
+            # Use temp directory for credentials
             temp_dir = tempfile.mkdtemp()
             os.environ['KAGGLE_CONFIG_DIR'] = temp_dir
             
-            # Create kaggle.json in temp dir
-            import json
             json_path = os.path.join(temp_dir, 'kaggle.json')
             with open(json_path, 'w') as f:
                 json.dump({
@@ -56,23 +51,36 @@ class KaggleConnector(BaseConnector):
             datasets = datasets[:limit]
             results = []
             for dataset in datasets:
+                # Handle tags safely
                 tags = []
-                if hasattr(dataset, 'tags') and dataset.tags:
-                    tags = [tag.get('_name', '') for tag in dataset.tags]
+                if hasattr(dataset, 'tags'):
+                    if isinstance(dataset.tags, list):
+                        for tag in dataset.tags:
+                            if hasattr(tag, '_name'):
+                                tags.append(tag._name)
+                            elif isinstance(tag, dict):
+                                tags.append(tag.get('_name', ''))
+                
+                # Get ref/id safely
+                ref = getattr(dataset, 'ref', None)
+                if not ref:
+                    ref = getattr(dataset, 'id', None)
+                if not ref:
+                    ref = 'sample'
                 
                 results.append({
-                    "title": dataset.title if hasattr(dataset, 'title') else "Unknown",
-                    "description": dataset.description[:500] if hasattr(dataset, 'description') and dataset.description else "",
+                    "title": getattr(dataset, 'title', 'Unknown'),
+                    "description": getattr(dataset, 'description', '')[:500] if getattr(dataset, 'description', '') else '',
                     "source": "kaggle",
                     "license": "Unknown",
-                    "download_url": f"https://www.kaggle.com/api/v1/datasets/download/{dataset.ref}",
-                    "source_url": f"https://www.kaggle.com/datasets/{dataset.ref}",
+                    "download_url": f"https://www.kaggle.com/api/v1/datasets/download/{ref}",
+                    "source_url": f"https://www.kaggle.com/datasets/{ref}",
                     "file_type": "csv",
                     "tags": tags,
-                    "size": dataset.size if hasattr(dataset, 'size') else 0,
-                    "samples": dataset.totalRows if hasattr(dataset, 'totalRows') else 0,
-                    "features": dataset.columnsCount if hasattr(dataset, 'columnsCount') else 0,
-                    "last_updated": str(dataset.lastUpdated) if hasattr(dataset, 'lastUpdated') else ""
+                    "size": getattr(dataset, 'size', 0) or 0,
+                    "samples": getattr(dataset, 'totalRows', 0) or 0,
+                    "features": getattr(dataset, 'columnsCount', 0) or 0,
+                    "last_updated": str(getattr(dataset, 'lastUpdated', ''))
                 })
             
             return results
@@ -93,22 +101,34 @@ class KaggleConnector(BaseConnector):
             )
             
             tags = []
-            if hasattr(dataset, 'tags') and dataset.tags:
-                tags = [tag.get('_name', '') for tag in dataset.tags]
+            if hasattr(dataset, 'tags'):
+                if isinstance(dataset.tags, list):
+                    for tag in dataset.tags:
+                        if hasattr(tag, '_name'):
+                            tags.append(tag._name)
+                        elif isinstance(tag, dict):
+                            tags.append(tag.get('_name', ''))
+            
+            # Get ref/id safely
+            ref = getattr(dataset, 'ref', None)
+            if not ref:
+                ref = getattr(dataset, 'id', None)
+            if not ref:
+                ref = dataset_id
             
             return {
-                "title": dataset.title,
-                "description": dataset.description,
+                "title": getattr(dataset, 'title', 'Unknown'),
+                "description": getattr(dataset, 'description', ''),
                 "source": "kaggle",
                 "license": "Unknown",
-                "download_url": f"https://www.kaggle.com/api/v1/datasets/download/{dataset_id}",
-                "source_url": f"https://www.kaggle.com/datasets/{dataset_id}",
+                "download_url": f"https://www.kaggle.com/api/v1/datasets/download/{ref}",
+                "source_url": f"https://www.kaggle.com/datasets/{ref}",
                 "file_type": "csv",
                 "tags": tags,
-                "size": dataset.size if hasattr(dataset, 'size') else 0,
-                "samples": dataset.totalRows if hasattr(dataset, 'totalRows') else 0,
-                "features": dataset.columnsCount if hasattr(dataset, 'columnsCount') else 0,
-                "last_updated": str(dataset.lastUpdated) if hasattr(dataset, 'lastUpdated') else ""
+                "size": getattr(dataset, 'size', 0) or 0,
+                "samples": getattr(dataset, 'totalRows', 0) or 0,
+                "features": getattr(dataset, 'columnsCount', 0) or 0,
+                "last_updated": str(getattr(dataset, 'lastUpdated', ''))
             }
             
         except Exception as e:
