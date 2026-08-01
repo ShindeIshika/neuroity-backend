@@ -104,6 +104,39 @@ function App() {
     return Math.min(score, 99);
   };
 
+  // ─── Helper: Get source badge color ───
+  const getSourceColor = (source) => {
+    const colors = {
+      kaggle: '#20BEFF',
+      huggingface: '#FFD21E',
+      uci: '#5B3E8D',
+      openml: '#FDB813',
+      zenodo: '#1682B8',
+      figshare: '#E94E1B',
+      github: '#FFFFFF',
+      openneuro: '#6B4EFF',
+      physionet: '#00B4D8',
+      google_dataset: '#4285F4',
+    };
+    return colors[source] || '#888888';
+  };
+
+  const getSourceLabel = (source) => {
+    const labels = {
+      kaggle: 'Kaggle',
+      huggingface: 'Hugging Face',
+      uci: 'UCI',
+      openml: 'OpenML',
+      zenodo: 'Zenodo',
+      figshare: 'Figshare',
+      github: 'GitHub',
+      openneuro: 'OpenNeuro',
+      physionet: 'PhysioNet',
+      google_dataset: 'Google Dataset',
+    };
+    return labels[source] || source || 'Unknown';
+  };
+
   return (
     <div className="app">
       {/* ─── NAVBAR ─── */}
@@ -181,6 +214,8 @@ function App() {
                 const sizeDisplay = formatSize(ds.size);
                 const samplesDisplay = formatSamples(ds.samples);
                 const tags = (ds.tags || []).slice(0, 4).map(cleanTag);
+                const sourceColor = getSourceColor(ds.source);
+                const sourceLabel = getSourceLabel(ds.source);
 
                 return (
                   <div key={i} className="result-card">
@@ -192,6 +227,24 @@ function App() {
                         <span className="license">{licenseDisplay}</span>
                       )}
                     </div>
+
+                    {/* ─── SOURCE BADGE ─── */}
+                    <div style={{ marginBottom: '6px' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        background: sourceColor,
+                        color: '#000',
+                        padding: '2px 10px',
+                        borderRadius: '10px',
+                        fontSize: '10px',
+                        fontWeight: '700',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px',
+                      }}>
+                        {sourceLabel}
+                      </span>
+                    </div>
+
                     <h3 className="card-title">{ds.title || 'Untitled'}</h3>
                     <p className="card-description">
                       {(ds.description || 'No description available.').slice(0, 180)}
