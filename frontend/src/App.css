@@ -169,7 +169,6 @@ nav a.active {
   max-width: 900px;
   margin: 0 auto;
 
-  /* ─── DARKER APPLE-STYLE GRADIENT ─── */
   background: linear-gradient(
     180deg,
     #ffffff 0%,
@@ -181,10 +180,8 @@ nav a.active {
 
   -webkit-background-clip: text;
   background-clip: text;
-
   -webkit-text-fill-color: transparent;
   color: transparent;
-
   display: inline-block;
   padding: 0 20px;
   will-change: transform;
@@ -725,7 +722,6 @@ main { flex: 1; display: flex; flex-direction: column; }
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
 }
 
-/* ─── DRAG HEADER ─── */
 .ai-widget-header {
   display: flex;
   align-items: center;
@@ -739,7 +735,6 @@ main { flex: 1; display: flex; flex-direction: column; }
   cursor: grabbing;
 }
 
-/* ─── RESIZE HANDLE ─── */
 .ai-resize-handle {
   position: absolute;
   bottom: 6px;
@@ -824,34 +819,6 @@ main { flex: 1; display: flex; flex-direction: column; }
 
 .ai-arrow svg { width: 18px; height: 18px; stroke: rgba(255, 255, 255, 0.3); }
 
-/* ─── RESPONSIVE ─── */
-@media (max-width: 768px) {
-  .ai-widget {
-    bottom: 16px;
-    right: 16px;
-    left: 16px;
-    width: auto !important;
-    max-width: none !important;
-    min-width: auto !important;
-    padding: 16px 18px 14px;
-  }
-
-  .ai-text {
-    font-size: 14px;
-  }
-
-  .ai-input {
-    padding: 10px 14px;
-  }
-
-  .ai-input input {
-    font-size: 13px;
-  }
-
-  .ai-resize-handle {
-    display: none;
-  }
-}
 /* ─── FOOTER ─── */
 footer {
   width: 100%;
@@ -915,104 +882,312 @@ footer .container {
 
   header .container {
     height: auto;
-    min-height: 60px;
+    min-height: 56px;
     flex-wrap: wrap;
-    gap: 8px;
-    padding: 12px 0;
+    gap: 6px;
+    padding: 8px 0;
   }
 
-  .logo { font-size: 17px; }
-
-  nav { gap: 16px; flex-wrap: wrap; }
-  nav a { font-size: 13px; }
-
-  .hero { padding: 40px 0 24px; }
-  .hero h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); }
-
-  .search-bar {
-    height: 56px;
-    border-radius: 40px;
-    padding: 0 12px 0 16px;
+  .logo {
+    font-size: 16px;
   }
 
-  .search-bar input {
-    font-size: 14px;
+  .logo .tag {
+    font-size: 12px;
   }
 
-  .search-bar input::placeholder {
+  nav {
+    gap: 12px;
+  }
+
+  nav a {
     font-size: 13px;
   }
 
+  .hero {
+    padding: 24px 0 16px;
+  }
+
+  .hero h1 {
+    font-size: 22px !important;
+    line-height: 1.2;
+    padding: 0 8px;
+  }
+
+  .search-wrapper {
+    padding: 0 8px;
+    max-width: 100%;
+  }
+
+  .search-bar {
+    height: 44px !important;
+    border-radius: 22px !important;
+    padding: 0 12px !important;
+    gap: 6px !important;
+  }
+
+  .search-icon svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .search-bar input {
+    font-size: 13px !important;
+    padding: 6px 0 !important;
+  }
+
+  .search-bar input::placeholder {
+    font-size: 11px !important;
+  }
+
   .search-bar button {
-    width: auto;
-    height: 44px;
-    padding: 8px 16px;
+    height: 32px !important;
+    padding: 0 12px !important;
+    font-size: 11px !important;
+    min-width: 60px !important;
+    width: auto !important;
+  }
+
+  .search-bar button svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .ai-tag {
+    margin: 6px 0 12px;
+  }
+
+  .ai-tag span {
+    font-size: 9px;
+    padding: 3px 10px;
+  }
+
+  .filters-container {
+    padding: 10px 12px;
+    margin-bottom: 14px;
+  }
+
+  .filters {
+    gap: 6px;
+    flex-direction: column;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .filter-group label {
+    font-size: 9px;
+  }
+
+  .filter-group select,
+  .filter-group input {
+    height: 28px;
+    font-size: 11px;
+    padding: 0 8px;
+  }
+
+  .apply-btn {
+    height: 28px;
+    font-size: 11px;
+    padding: 0 12px;
+    width: 100%;
+  }
+
+  .result-count {
+    font-size: 11px;
+    margin-bottom: 10px;
+  }
+
+  .results-grid {
+    gap: 10px;
+    grid-template-columns: 1fr;
+  }
+
+  .result-card {
+    padding: 14px;
+  }
+
+  .card-top {
+    margin-bottom: 6px;
+  }
+
+  .quality {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+
+  .quality .dot {
+    width: 4px;
+    height: 4px;
+  }
+
+  .license {
+    font-size: 9px;
+    padding: 3px 8px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .card-description {
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+
+  .file-tags {
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+
+  .file-tag {
+    font-size: 9px;
+    height: 18px;
+    padding: 2px 8px;
+  }
+
+  .card-divider {
+    margin: 6px 0 8px;
+  }
+
+  .card-meta {
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .meta-label {
+    font-size: 8px;
+  }
+
+  .meta-value {
+    font-size: 16px;
+  }
+
+  .card-buttons {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .card-buttons button {
+    height: 34px;
+    font-size: 11px;
+  }
+
+  .empty-state {
+    padding: 20px 12px;
+  }
+
+  .empty-state h3 {
     font-size: 14px;
   }
 
-  .ai-tag span { font-size: 10px; padding: 4px 12px; }
+  .empty-state p {
+    font-size: 12px;
+  }
 
-  .filters-container { padding: 12px 14px; }
-  .filters { flex-direction: column; gap: 10px; }
-  .filter-group { min-width: 100%; }
-  .apply-btn { width: 100%; }
+  .provider-summary {
+    padding: 10px 12px;
+    margin-bottom: 10px;
+  }
 
-  .results-grid { grid-template-columns: 1fr; gap: 16px; }
-  .result-card { padding: 20px; }
+  .provider-summary-title {
+    font-size: 11px;
+  }
 
-  .card-title { font-size: 18px; }
-  .card-description { font-size: 14px; }
-  .card-meta { gap: 24px; }
-  .meta-value { font-size: 22px; }
+  .provider-summary-count {
+    font-size: 10px;
+  }
 
-  .card-buttons { flex-direction: column; gap: 8px; }
-  .card-buttons button { height: 42px; }
+  .provider-item {
+    font-size: 10px;
+  }
 
-  .ai-widget { display: none; }
+  .ai-widget {
+    display: none !important;
+  }
 
   footer .container {
     flex-direction: column;
     text-align: center;
     height: auto;
-    padding: 20px 0;
+    padding: 14px 0;
+    gap: 6px;
   }
 
-  .footer-right { gap: 16px; flex-wrap: wrap; justify-content: center; }
+  .footer-logo {
+    font-size: 11px;
+  }
+
+  .footer-left p {
+    font-size: 10px;
+  }
+
+  .footer-right {
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .footer-right a {
+    font-size: 10px;
+  }
 }
 
 @media (max-width: 480px) {
-  .hero { padding: 30px 0 16px; }
-  .hero h1 { font-size: 22px; }
+  .hero h1 {
+    font-size: 18px !important;
+  }
 
   .search-bar {
-    height: auto;
-    padding: 12px;
-    border-radius: 20px;
-    flex-direction: column;
+    height: 38px !important;
+    border-radius: 19px !important;
+    padding: 0 10px !important;
   }
 
   .search-bar input {
-    height: 44px;
-    width: 100%;
-    font-size: 14px;
+    font-size: 12px !important;
   }
 
   .search-bar input::placeholder {
-    font-size: 12px;
+    font-size: 10px !important;
   }
 
   .search-bar button {
-    width: 100%;
-    height: 44px;
+    height: 28px !important;
+    font-size: 10px !important;
+    padding: 0 10px !important;
+    min-width: 50px !important;
+  }
+
+  .search-icon svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .result-card {
+    padding: 12px;
+  }
+
+  .card-title {
     font-size: 14px;
   }
 
-  .result-card { padding: 16px; }
-  .card-title { font-size: 16px; }
-  .card-description { font-size: 13px; }
-  .card-meta { gap: 16px; }
-  .meta-value { font-size: 18px; }
-  .file-tag { font-size: 10px; height: 22px; padding: 2px 10px; }
+  .card-description {
+    font-size: 11px;
+  }
+
+  .meta-value {
+    font-size: 14px;
+  }
+
+  .file-tag {
+    font-size: 8px;
+    height: 16px;
+    padding: 1px 6px;
+  }
 }
 
 /* ─── LOADING OVERLAY ─── */
@@ -1038,243 +1213,93 @@ footer .container {
   font-size: 16px;
 }
 
-/* ─── MOBILE OPTIMIZATION ─── */
+/* ─── FINAL MOBILE MARGIN FIX ─── */
 @media (max-width: 768px) {
-  /* Hero */
-  .hero {
-    padding: 30px 0 16px !important;
+  /* Fix main container margins */
+  .app {
+    padding: 0 4px !important;
   }
 
-  .hero h1 {
-    font-size: 24px !important;
-    line-height: 1.2 !important;
-    padding: 0 12px !important;
-  }
-
-  /* Search Bar */
-  .search-wrapper {
+  .container {
+    padding-inline: 8px !important;
     max-width: 100% !important;
-    padding: 0 12px !important;
   }
 
-  .search-bar {
-    height: 48px !important;
-    border-radius: 24px !important;
-    padding: 0 12px !important;
-    gap: 8px !important;
-  }
-
-  .search-bar input {
-    font-size: 14px !important;
-  }
-
-  .search-bar input::placeholder {
-    font-size: 12px !important;
-  }
-
-  .search-bar button {
-    width: auto !important;
-    height: 36px !important;
-    padding: 0 14px !important;
-    font-size: 13px !important;
-    min-width: 80px !important;
-  }
-
-  .search-bar button svg {
-    width: 12px !important;
-    height: 12px !important;
-  }
-
-  .search-icon svg {
-    width: 16px !important;
-    height: 16px !important;
-  }
-
-  /* AI Tag */
-  .ai-tag {
-    margin: 8px 0 16px !important;
-  }
-
-  .ai-tag span {
-    font-size: 10px !important;
-    padding: 4px 12px !important;
-  }
-
-  /* Filters */
-  .filters-container {
-    padding: 12px 14px !important;
-    margin-bottom: 16px !important;
-  }
-
-  .filters {
-    gap: 8px !important;
-  }
-
-  .filter-group {
-    min-width: 100% !important;
-  }
-
-  .filter-group label {
-    font-size: 10px !important;
-  }
-
-  .filter-group select,
-  .filter-group input {
-    height: 32px !important;
-    font-size: 12px !important;
-    padding: 0 10px !important;
-  }
-
-  .apply-btn {
-    height: 32px !important;
-    font-size: 12px !important;
-    padding: 0 16px !important;
+  /* Fix header spacing */
+  header .container {
+    padding: 0 8px !important;
     width: 100% !important;
   }
 
-  /* Result Count */
-  .result-count {
-    font-size: 12px !important;
-    margin-bottom: 12px !important;
+  /* Fix search bar margins */
+  .search-wrapper {
+    padding: 0 4px !important;
+    margin: 0 auto 12px !important;
   }
 
-  /* Cards */
+  /* Fix hero margins */
+  .hero {
+    padding: 16px 0 12px !important;
+  }
+
+  .hero h1 {
+    padding: 0 4px !important;
+  }
+
+  /* Fix filter container margins */
+  .filters-container {
+    margin: 0 0 12px 0 !important;
+    padding: 10px 8px !important;
+  }
+
+  /* Fix results grid */
   .results-grid {
-    gap: 12px !important;
+    gap: 8px !important;
+    padding: 0 0 !important;
   }
 
   .result-card {
-    padding: 14px !important;
+    padding: 12px !important;
+    margin: 0 0 !important;
   }
 
-  .card-top {
-    margin-bottom: 8px !important;
+  /* Fix footer margins */
+  footer {
+    margin-top: 16px !important;
   }
 
-  .quality {
-    font-size: 10px !important;
-    padding: 4px 8px !important;
-  }
-
-  .quality .dot {
-    width: 4px !important;
-    height: 4px !important;
-  }
-
-  .license {
-    font-size: 10px !important;
-    padding: 4px 8px !important;
-  }
-
-  .card-title {
-    font-size: 16px !important;
-    line-height: 1.3 !important;
-  }
-
-  .card-description {
-    font-size: 13px !important;
-    line-height: 1.5 !important;
-    margin-bottom: 8px !important;
-  }
-
-  .file-tags {
-    gap: 4px !important;
-    margin-bottom: 8px !important;
-  }
-
-  .file-tag {
-    font-size: 10px !important;
-    height: 20px !important;
-    padding: 2px 8px !important;
-  }
-
-  .card-divider {
-    margin: 8px 0 10px !important;
-  }
-
-  .card-meta {
-    gap: 16px !important;
-    margin-bottom: 10px !important;
-  }
-
-  .meta-label {
-    font-size: 9px !important;
-  }
-
-  .meta-value {
-    font-size: 18px !important;
-  }
-
-  .card-buttons {
-    flex-direction: column !important;
-    gap: 6px !important;
-  }
-
-  .card-buttons button {
-    height: 38px !important;
-    font-size: 12px !important;
-  }
-
-  /* Empty State */
-  .empty-state {
-    padding: 30px 16px !important;
-  }
-
-  .empty-state h3 {
-    font-size: 16px !important;
-  }
-
-  .empty-state p {
-    font-size: 13px !important;
-  }
-
-  /* Footer */
   footer .container {
-    flex-direction: column !important;
-    text-align: center !important;
-    height: auto !important;
-    padding: 16px 0 !important;
-    gap: 8px !important;
+    padding: 8px 0 !important;
   }
 
-  .footer-logo {
-    font-size: 12px !important;
+  /* Fix AI tag */
+  .ai-tag {
+    margin: 4px 0 8px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .app {
+    padding: 0 2px !important;
   }
 
-  .footer-left p {
-    font-size: 11px !important;
+  .container {
+    padding-inline: 4px !important;
   }
 
-  .footer-right {
-    gap: 12px !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
+  header .container {
+    padding: 0 4px !important;
   }
 
-  .footer-right a {
-    font-size: 11px !important;
+  .search-wrapper {
+    padding: 0 2px !important;
   }
 
-  /* AI Widget - hide on mobile */
-  .ai-widget {
-    display: none !important;
+  .filters-container {
+    padding: 6px 4px !important;
   }
 
-  /* Provider Summary */
-  .provider-summary {
-    padding: 12px 14px !important;
-    margin-bottom: 12px !important;
-  }
-
-  .provider-summary-title {
-    font-size: 12px !important;
-  }
-
-  .provider-summary-count {
-    font-size: 11px !important;
-  }
-
-  .provider-item {
-    font-size: 11px !important;
+  .result-card {
+    padding: 8px !important;
   }
 }

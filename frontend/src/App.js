@@ -410,7 +410,7 @@ function App() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search datasets across 10+ platforms..."
+                placeholder="Search datasets across 10+ platforms"
                 aria-label="Search datasets"
                 disabled={loading}
               />
