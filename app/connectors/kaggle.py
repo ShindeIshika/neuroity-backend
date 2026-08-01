@@ -3,7 +3,6 @@ from app.connectors.base import BaseConnector
 from typing import List, Dict, Any, Optional
 import asyncio
 import os
-import json
 
 class KaggleConnector(BaseConnector):
     """Kaggle API connector"""
@@ -15,28 +14,28 @@ class KaggleConnector(BaseConnector):
         try:
             from kaggle.api.kaggle_api_extended import KaggleApi
             
-            # 🔥 HARDCODE CREDENTIALS HERE
-            kaggle_dir = os.path.join(os.path.expanduser('~'), '.kaggle')
-            os.makedirs(kaggle_dir, exist_ok=True)
+            # 🔥 Use environment variables for credentials
+            os.environ['KAGGLE_USERNAME'] = "KGAT"
+            os.environ['KAGGLE_KEY'] = "32d9e621f06055558c70e4201f2c3fcc"
             
-            json_path = os.path.join(kaggle_dir, 'kaggle.json')
+            # Alternative: Try to write to a temp directory
+            import tempfile
+            temp_dir = tempfile.mkdtemp()
+            os.environ['KAGGLE_CONFIG_DIR'] = temp_dir
+            
+            # Create kaggle.json in temp dir
+            import json
+            json_path = os.path.join(temp_dir, 'kaggle.json')
             with open(json_path, 'w') as f:
                 json.dump({
                     "username": "KGAT",
                     "key": "32d9e621f06055558c70e4201f2c3fcc"
                 }, f)
             
-            try:
-                os.chmod(json_path, 0o600)
-            except:
-                pass
-            
-            os.environ['KAGGLE_CONFIG_DIR'] = kaggle_dir
-            
             self.api = KaggleApi()
             self.api.authenticate()
             self.authenticated = True
-            print("✅ Kaggle authenticated successfully (hardcoded)")
+            print("✅ Kaggle authenticated successfully (temp dir)")
         except Exception as e:
             print(f"⚠️ Kaggle auth failed: {e}")
             self.authenticated = False

@@ -31,8 +31,8 @@ async def search_datasets(
                         "figshare", "openneuro", "physionet", "github", "google_dataset"]
     provider_status = {}
     
-    if not source or source.lower() == "kaggle":
-        connectors.append(KaggleConnector())
+    #if not source or source.lower() == "kaggle":
+        #connectors.append(KaggleConnector())
     if not source or source.lower() == "huggingface":
         connectors.append(HuggingFaceConnector())
     if not source or source.lower() == "uci":
