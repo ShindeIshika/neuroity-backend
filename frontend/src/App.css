@@ -591,32 +591,45 @@ main { flex: 1; display: flex; flex-direction: column; }
   transform: scale(0.97);
 }
 
+/* ─── BUTTON STYLES (FINAL) ─── */
 .btn-redirect {
   background: linear-gradient(180deg, #ffffff 0%, #fafafa 35%, #f5f5f5 60%, #ececec 100%) !important;
-  color: #000;
-  border: none;
+  color: #000 !important;
+  border: none !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 0 20px !important;
+  min-width: 120px !important;
+  height: 48px !important;
+  border-radius: var(--radius-sm) !important;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.55) inset,
-    0 -1px 0 rgba(0, 0, 0, 0.06) inset;
+    0 -1px 0 rgba(0, 0, 0, 0.06) inset !important;
 }
 
 .btn-redirect:hover {
-  opacity: 0.92;
+  opacity: 0.92 !important;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.55) inset,
     0 -1px 0 rgba(0, 0, 0, 0.06) inset,
-    0 8px 20px rgba(0, 0, 0, 0.2);
+    0 8px 20px rgba(0, 0, 0, 0.2) !important;
 }
 
 .btn-preview {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
+  background: transparent !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  padding: 0 20px !important;
+  min-width: 100px !important;
+  height: 48px !important;
+  border-radius: var(--radius-sm) !important;
 }
 
 .btn-preview:hover {
-  background: var(--surface-3);
-  border-color: var(--border-hover);
+  background: var(--surface-3) !important;
+  border-color: var(--border-hover) !important;
 }
 
 /* ─── EMPTY STATE ─── */
@@ -1134,6 +1147,25 @@ footer .container {
   .footer-right a {
     font-size: 10px;
   }
+
+  /* Mobile button fix */
+  .btn-redirect {
+    min-width: 100px !important;
+    height: 44px !important;
+    font-size: 13px !important;
+    padding: 0 16px !important;
+  }
+
+  .btn-preview {
+    min-width: 80px !important;
+    height: 44px !important;
+    font-size: 13px !important;
+    padding: 0 16px !important;
+  }
+
+  .card-buttons {
+    gap: 8px !important;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1212,94 +1244,310 @@ footer .container {
   color: var(--text);
   font-size: 16px;
 }
+/* ─── FIX BUTTONS ─── */
+.card-buttons {
+  display: flex !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
 
-/* ─── FINAL MOBILE MARGIN FIX ─── */
+.card-buttons button {
+  flex: 1 !important;
+  min-width: 0 !important;
+  height: 48px !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all var(--transition-slow) !important;
+  padding: 0 16px !important;
+  white-space: nowrap !important;
+}
+
+.btn-redirect {
+  background: linear-gradient(180deg, #ffffff 0%, #fafafa 35%, #f5f5f5 60%, #ececec 100%) !important;
+  color: #000 !important;
+  border: none !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.06) inset !important;
+}
+
+.btn-redirect:hover {
+  opacity: 0.92 !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.55) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.06) inset,
+    0 8px 20px rgba(0, 0, 0, 0.2) !important;
+}
+
+.btn-preview {
+  background: transparent !important;
+  color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.btn-preview:hover {
+  background: var(--surface-3) !important;
+  border-color: var(--border-hover) !important;
+}
+
+/* ─── MOBILE ─── */
 @media (max-width: 768px) {
-  /* Fix main container margins */
-  .app {
-    padding: 0 4px !important;
-  }
-
-  .container {
-    padding-inline: 8px !important;
-    max-width: 100% !important;
-  }
-
-  /* Fix header spacing */
-  header .container {
-    padding: 0 8px !important;
-    width: 100% !important;
-  }
-
-  /* Fix search bar margins */
-  .search-wrapper {
-    padding: 0 4px !important;
-    margin: 0 auto 12px !important;
-  }
-
-  /* Fix hero margins */
-  .hero {
-    padding: 16px 0 12px !important;
-  }
-
-  .hero h1 {
-    padding: 0 4px !important;
-  }
-
-  /* Fix filter container margins */
-  .filters-container {
-    margin: 0 0 12px 0 !important;
-    padding: 10px 8px !important;
-  }
-
-  /* Fix results grid */
-  .results-grid {
+  .card-buttons {
+    flex-direction: column !important;
     gap: 8px !important;
-    padding: 0 0 !important;
   }
 
-  .result-card {
-    padding: 12px !important;
-    margin: 0 0 !important;
-  }
-
-  /* Fix footer margins */
-  footer {
-    margin-top: 16px !important;
-  }
-
-  footer .container {
-    padding: 8px 0 !important;
-  }
-
-  /* Fix AI tag */
-  .ai-tag {
-    margin: 4px 0 8px !important;
+  .card-buttons button {
+    height: 42px !important;
+    font-size: 13px !important;
+    flex: none !important;
+    width: 100% !important;
   }
 }
 
-@media (max-width: 480px) {
-  .app {
-    padding: 0 2px !important;
-  }
+/* ─── FIX: Margins, Padding, Input & Button Height ─── */
 
-  .container {
-    padding-inline: 4px !important;
-  }
+/* Search Bar */
+.search-wrapper {
+  padding: 0 16px !important;
+  max-width: 100% !important;
+}
 
+.search-bar {
+  height: 56px !important;
+  border-radius: 28px !important;
+  padding: 0 20px !important;
+  gap: 10px !important;
+}
+
+.search-bar input {
+  font-size: 15px !important;
+  height: 100% !important;
+  padding: 12px 0 !important;
+}
+
+.search-bar button {
+  height: 42px !important;
+  padding: 0 24px !important;
+  font-size: 14px !important;
+  min-width: 80px !important;
+}
+
+/* Cards */
+.result-card {
+  padding: 20px !important;
+  margin: 0 12px !important;
+}
+
+/* Buttons */
+.card-buttons {
+  gap: 12px !important;
+}
+
+.card-buttons button {
+  height: 44px !important;
+  font-size: 14px !important;
+  padding: 0 20px !important;
+}
+
+/* Filters */
+.filters-container {
+  margin: 0 12px 16px !important;
+  padding: 14px 16px !important;
+}
+
+.filter-group select,
+.filter-group input {
+  height: 38px !important;
+  font-size: 13px !important;
+}
+
+.apply-btn {
+  height: 38px !important;
+  font-size: 13px !important;
+}
+
+/* Tags */
+.file-tag {
+  height: 24px !important;
+  font-size: 11px !important;
+  padding: 2px 12px !important;
+}
+
+/* Meta */
+.meta-value {
+  font-size: 18px !important;
+}
+/* ─── FIX NAVBAR SPACING ─── */
+@media (max-width: 768px) {
   header .container {
-    padding: 0 4px !important;
+    padding: 0 16px !important;
+    width: 100% !important;
   }
 
-  .search-wrapper {
-    padding: 0 2px !important;
+  .logo {
+    font-size: 16px !important;
+    padding: 0 !important;
   }
 
-  .filters-container {
-    padding: 6px 4px !important;
+  .logo .tag {
+    font-size: 12px !important;
   }
 
-  .result-card {
-    padding: 8px !important;
+  nav {
+    gap: 12px !important;
+  }
+
+  nav a {
+    font-size: 13px !important;
+    padding: 4px 0 !important;
+  }
+}
+/* ─── SHIFT APPLY BUTTON DOWN ─── */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.filter-group label {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.filter-group select,
+.filter-group input {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all var(--transition);
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  border-color: var(--border-focus);
+}
+
+.apply-btn {
+  height: 34px;
+  padding: 0 24px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: linear-gradient(180deg, #ffffff 0%, #ececec 100%) !important;
+  color: #000;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 80px;
+  transition: all var(--transition);
+  margin-top: 8px;  /* ← THIS SHIFTS IT DOWN */
+}
+
+.apply-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+.apply-btn:active { transform: scale(0.97); }
+
+/* ─── MOBILE ─── */
+@media (max-width: 768px) {
+  .apply-btn {
+    margin-top: 12px !important;  /* ← MORE SPACE ON MOBILE */
+    width: 100% !important;
+  }
+
+  .filters {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+}
+
+/* ─── DECREASE SEARCH BAR BORDER ─── */
+.search-bar {
+  border-width: 1px !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.search-bar:focus-within {
+  border-width: 1px !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 30px rgba(255, 255, 255, 0.04);
+}
+
+/* ─── DECREASE SEARCH BUTTON BORDER ─── */
+.search-bar button {
+  border-width: 1px !important;
+  border-color: rgba(200, 200, 200, 0.5) !important;
+}
+
+/* ─── FIX SEARCH BUTTON OVERFLOW ─── */
+.search-bar {
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  height: 76px !important;
+  padding: 4px !important;
+}
+
+.search-bar button {
+  height: calc(100% - 8px) !important;
+  width: 155px !important;
+  min-width: 120px !important;
+  max-width: 160px !important;
+  flex-shrink: 0 !important;
+  border-radius: var(--radius-full) !important;
+  padding: 0 20px !important;
+  font-size: 15px !important;
+  white-space: nowrap !important;
+}
+
+.search-bar input {
+  min-width: 0 !important;
+  padding: 0 16px !important;
+  height: 100% !important;
+}
+
+/* ─── MOBILE ─── */
+@media (max-width: 768px) {
+  .search-bar {
+    height: 52px !important;
+    padding: 4px !important;
+  }
+
+  .search-bar button {
+    height: calc(100% - 8px) !important;
+    width: auto !important;
+    min-width: 70px !important;
+    max-width: 100px !important;
+    font-size: 12px !important;
+    padding: 0 12px !important;
+  }
+
+  .search-bar input {
+    font-size: 13px !important;
+    padding: 0 12px !important;
   }
 }

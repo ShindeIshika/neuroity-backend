@@ -223,7 +223,7 @@ const ResultCard = React.memo(({ ds }) => {
           onClick={handleRedirect}
           disabled={!ds.source_url}
         >
-          Visit Source →
+          Redirect →
         </button>
         <button
           className="btn-preview"
@@ -256,12 +256,12 @@ function App() {
   const inputRef = useRef(null);
   const isFirstLoad = useRef(true);
 
-  // ─── AI WIDGET STATE ───
+  // ─── AI WIDGET DRAG STATE ───
   const widgetRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [widgetPos, setWidgetPos] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [widgetWidth, setWidgetWidth] = useState(380);
+  const [widgetPos, setWidgetPos] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     if (isFirstLoad.current) {
@@ -285,26 +285,28 @@ function App() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  // ─── SMOOTH DRAG HANDLERS ───
+  // ─── DRAG HANDLERS ───
   const handleDragStart = (e) => {
     if (!e.target.closest('.ai-widget-header')) return;
     setIsDragging(true);
-    setDragStart({
+    setDragOffset({
       x: e.clientX - widgetPos.x,
       y: e.clientY - widgetPos.y
     });
+    widgetRef.current.classList.add('dragging');
   };
 
   const handleDragMove = useCallback((e) => {
     if (!isDragging) return;
     setWidgetPos({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y
+      x: e.clientX - dragOffset.x,
+      y: e.clientY - dragOffset.y
     });
-  }, [isDragging, dragStart]);
+  }, [isDragging, dragOffset]);
 
   const handleDragEnd = () => {
     setIsDragging(false);
+    widgetRef.current?.classList.remove('dragging');
   };
 
   // ─── RESIZE HANDLER ───
@@ -314,7 +316,7 @@ function App() {
     const startWidth = widgetWidth;
 
     const onResize = (ev) => {
-      const newWidth = Math.min(520, Math.max(280, startWidth + (ev.clientX - startX)));
+      const newWidth = Math.min(500, Math.max(300, startWidth + (ev.clientX - startX)));
       setWidgetWidth(newWidth);
     };
 
@@ -410,7 +412,7 @@ function App() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search datasets across 10+ platforms"
+                placeholder="Search datasets across 10+ platforms..."
                 aria-label="Search datasets"
                 disabled={loading}
               />
@@ -517,7 +519,7 @@ function App() {
         </div>
       </main>
 
-      {/* ─── SMOOTH DRAGGABLE & RESIZABLE AI WIDGET ─── */}
+      {/* ─── FLOATING AI WIDGET ─── */}
       <div
         ref={widgetRef}
         className="ai-widget"
@@ -537,7 +539,7 @@ function App() {
           I'll find the best datasets for your AI model.
         </p>
         <div className="ai-input">
-          <input type="text" placeholder="I need 10k images of..." />
+          <input type="text" placeholder="e.g. brain MRI scans, climate data, stock prices..." />
           <span className="ai-arrow"><ArrowIcon /></span>
         </div>
         <div className="ai-resize-handle" onMouseDown={handleResizeStart}>
