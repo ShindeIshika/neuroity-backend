@@ -1,7 +1,9 @@
 # app/api/v1/search.py
+
 from fastapi import APIRouter, Query
 from typing import Optional
 import asyncio
+
 from app.connectors.kaggle import KaggleConnector
 from app.connectors.huggingface import HuggingFaceConnector
 from app.connectors.uci import UCIConnector
@@ -15,124 +17,149 @@ from app.connectors.google_dataset import GoogleDatasetConnector
 
 router = APIRouter()
 
+
 @router.get("/search")
 async def search_datasets(
     q: str = Query(..., description="Search query"),
-    source: Optional[str] = Query(None, description="Filter by source"),
-    filetype: Optional[str] = Query(None, description="Filter by file type"),
-    domain: Optional[str] = Query(None, description="Filter by domain"),
-    limit: int = Query(10, ge=1, le=50, description="Results per page"),
-    offset: int = Query(0, ge=0, description="Pagination offset")
+    source: Optional[str] = Query(None, description="Search only one provider"),
+    filetype: Optional[str] = Query(None),
+    domain: Optional[str] = Query(None),
+    limit: int = Query(10, ge=1, le=50),
+    offset: int = Query(0, ge=0),
 ):
-    """Universal dataset search across all 10 platforms"""
-    
-    connectors = []
-    available_sources = ["kaggle", "huggingface", "uci", "openml", "zenodo", 
-                        "figshare", "openneuro", "physionet", "github", "google_dataset"]
+    """Universal dataset search"""
+
+    connector_map = {
+        "kaggle": KaggleConnector,
+        "huggingface": HuggingFaceConnector,
+        "uci": UCIConnector,
+        "openml": OpenMLConnector,
+        "zenodo": ZenodoConnector,
+        "figshare": FigshareConnector,
+        "openneuro": OpenNeuroConnector,
+        "physionet": PhysioNetConnector,
+        "github": GitHubConnector,
+        "google_dataset": GoogleDatasetConnector,
+    }
+
     provider_status = {}
-    
-    #if not source or source.lower() == "kaggle":
-        #connectors.append(KaggleConnector())
-    if not source or source.lower() == "huggingface":
-        connectors.append(HuggingFaceConnector())
-    if not source or source.lower() == "uci":
-        connectors.append(UCIConnector())
-    if not source or source.lower() == "openml":
-        connectors.append(OpenMLConnector())
-    if not source or source.lower() == "zenodo":
-        connectors.append(ZenodoConnector())
-    if not source or source.lower() == "figshare":
-        connectors.append(FigshareConnector())
-    if not source or source.lower() == "openneuro":
-        connectors.append(OpenNeuroConnector())
-    if not source or source.lower() == "physionet":
-        connectors.append(PhysioNetConnector())
-    if not source or source.lower() == "github":
-        connectors.append(GitHubConnector())
-    if not source or source.lower() == "google_dataset":
-        connectors.append(GoogleDatasetConnector())
-    
-    if source and not connectors:
-        return {
-            "success": False,
-            "query": q,
-            "error": f"Source '{source}' not found",
-            "available_sources": available_sources
-        }
-    
-    # Run all searches concurrently
-    tasks = []
-    connector_names = []
-    for c in connectors:
-        tasks.append(c.search(q, limit + offset))
-        connector_names.append(c.source_name)
-    
-    results_list = await asyncio.gather(*tasks, return_exceptions=True)
-    
-    # Track provider status
+
+    # Build connector list
+    if source:
+        source = source.lower()
+
+        if source not in connector_map:
+            return {
+                "success": False,
+                "error": f"Unknown source '{source}'",
+                "available_sources": list(connector_map.keys()),
+            }
+
+        connectors = [connector_map[source]()]
+    else:
+        connectors = [cls() for cls in connector_map.values()]
+
+    # Launch searches concurrently
+    tasks = [connector.search(q, limit + offset) for connector in connectors]
+
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
     all_results = []
-    for i, result in enumerate(results_list):
-        source_name = connector_names[i] if i < len(connector_names) else "unknown"
+
+    for connector, result in zip(connectors, results):
+
         if isinstance(result, Exception):
-            provider_status[source_name] = f"error: {str(result)[:50]}"
-        elif isinstance(result, list):
-            provider_status[source_name] = f"ok ({len(result)} results)"
-            all_results.extend(result)
-        else:
-            provider_status[source_name] = "unknown response"
-    
-    # Deduplicate based on title + source
+            print(f"{connector.source_name} failed:")
+            print(result)
+
+            provider_status[connector.source_name] = "error"
+
+            continue
+
+        provider_status[connector.source_name] = f"{len(result)} results"
+
+        all_results.extend(result)
+
+    # Remove duplicates
     seen = set()
-    unique_results = []
-    for r in all_results:
-        key = f"{r.get('title', '').lower()}_{r.get('source', '')}"
+    unique = []
+
+    for item in all_results:
+
+        key = (
+            item.get("title", "").lower(),
+            item.get("source", "").lower(),
+        )
+
         if key not in seen:
             seen.add(key)
-            unique_results.append(r)
-    all_results = unique_results
-    
-    # Apply filters
+            unique.append(item)
+
+    all_results = unique
+
+    # File type filter
     if filetype:
-        all_results = [r for r in all_results if r.get("file_type", "").lower() == filetype.lower()]
-    
+        all_results = [
+            r
+            for r in all_results
+            if r.get("file_type", "").lower() == filetype.lower()
+        ]
+
+    # Domain filter
     if domain:
-        domain_lower = domain.lower()
-        filtered_by_domain = []
+
+        domain = domain.lower()
+
+        filtered = []
+
         for r in all_results:
+
             tags = [t.lower() for t in r.get("tags", [])]
-            if domain_lower in tags or domain_lower in r.get("source", "").lower():
-                filtered_by_domain.append(r)
-        all_results = filtered_by_domain
-    
-    # Sort by relevance (title match + source priority)
+
+            if (
+                domain in tags
+                or domain in r.get("source", "").lower()
+            ):
+                filtered.append(r)
+
+        all_results = filtered
+
+    # Relevance scoring
+    query = q.lower()
+
     for r in all_results:
+
         score = 0
-        title_lower = r.get('title', '').lower()
-        if q.lower() in title_lower:
+
+        title = r.get("title", "").lower()
+
+        if query in title:
             score += 10
-        if r.get('source') == 'kaggle':
+
+        if r["source"] == "kaggle":
             score += 2
-        elif r.get('source') == 'huggingface':
+
+        elif r["source"] == "huggingface":
             score += 1
-        r['_score'] = score
-    
-    all_results.sort(key=lambda x: x.get('_score', 0), reverse=True)
-    
-    # Remove internal score field
+
+        r["_score"] = score
+
+    all_results.sort(
+        key=lambda x: x["_score"],
+        reverse=True,
+    )
+
     for r in all_results:
-        if '_score' in r:
-            del r['_score']
-    
-    # Pagination
-    total_results = len(all_results)
-    paginated_results = all_results[offset:offset + limit]
-    
+        r.pop("_score", None)
+
+    total = len(all_results)
+
     return {
         "success": True,
         "query": q,
-        "total_results": total_results,
+        "total_results": total,
         "offset": offset,
         "limit": limit,
         "providers": provider_status,
-        "results": paginated_results
+        "results": all_results[offset : offset + limit],
     }
