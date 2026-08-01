@@ -4,6 +4,35 @@ import './App.css';
 
 const API_BASE = 'https://neuroity-backend.onrender.com';
 
+// ─── SVG ICONS ───
+const SearchIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="11" cy="11" r="8" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+);
+
+const SparkleIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2L13.5 10.5L22 12L13.5 13.5L12 22L10.5 13.5L2 12L10.5 10.5L12 2Z" />
+  </svg>
+);
+
+const ArrowIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="5" y1="12" x2="19" y2="12" />
+    <polyline points="12 5 19 12 12 19" />
+  </svg>
+);
+
+const AIStarIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2L13.5 10.5L22 12L13.5 13.5L12 22L10.5 13.5L2 12L10.5 10.5L12 2Z" />
+    <path d="M8 8L16 16" />
+    <path d="M16 8L8 16" />
+  </svg>
+);
+
 function App() {
   const [query, setQuery] = useState('iris');
   const [results, setResults] = useState([]);
@@ -47,8 +76,8 @@ function App() {
 
   const formatSize = (bytes) => {
     if (!bytes || bytes === 0) return '—';
-    if (bytes >= 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`;
-    if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    if (bytes >= 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} TB`;
+    if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} GB`;
     if (bytes >= 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${bytes} B`;
   };
@@ -104,7 +133,6 @@ function App() {
     return Math.min(score, 99);
   };
 
-  // ─── Helper: Get source badge color ───
   const getSourceColor = (source) => {
     const colors = {
       kaggle: '#20BEFF',
@@ -141,60 +169,79 @@ function App() {
     <div className="app">
       {/* ─── NAVBAR ─── */}
       <header>
-        <div className="logo">Neuroity AI</div>
+        <div className="logo">Neuroity Data Search</div>
         <nav>
           <a href="#" className="active">Datasets</a>
+          <a href="#">Research</a>
+          <a href="#">API</a>
+          <a href="#">Pricing</a>
         </nav>
       </header>
 
       {/* ─── HERO ─── */}
       <main>
         <div className="hero">
-          <h1>Fuel your models with precision.</h1>
+          <h1>One search. Every dataset.</h1>
         </div>
 
         {/* ─── SEARCH BAR ─── */}
         <form onSubmit={handleSearch} className="search-bar">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon"><SearchIcon /></span>
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search datasets, research papers, images, audio, video, CSV, JSON..."
           />
-          <button type="submit">✨ Search</button>
+          <button type="submit"><SparkleIcon /> Search</button>
         </form>
 
+        {/* ─── AI TRAINING TAG ─── */}
+        <div className="ai-tag">
+          <span>AI Training</span>
+        </div>
+
         {/* ─── FILTERS ─── */}
-        <div className="filters">
-          <select
-            value={filters.source}
-            onChange={(e) => setFilters({ ...filters, source: e.target.value })}
-          >
-            <option value="">All Sources</option>
-            <option value="kaggle">Kaggle</option>
-            <option value="huggingface">Hugging Face</option>
-            <option value="uci">UCI</option>
-            <option value="openml">OpenML</option>
-            <option value="zenodo">Zenodo</option>
-            <option value="figshare">Figshare</option>
-            <option value="github">GitHub</option>
-            <option value="openneuro">OpenNeuro</option>
-            <option value="physionet">PhysioNet</option>
-          </select>
-          <input
-            type="text"
-            placeholder="File type"
-            value={filters.filetype}
-            onChange={(e) => setFilters({ ...filters, filetype: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Domain"
-            value={filters.domain}
-            onChange={(e) => setFilters({ ...filters, domain: e.target.value })}
-          />
-          <button type="button" onClick={() => search(0)}>Apply</button>
+        <div className="filters-container">
+          <div className="filters">
+            <div className="filter-group">
+              <label>Source</label>
+              <select
+                value={filters.source}
+                onChange={(e) => setFilters({ ...filters, source: e.target.value })}
+              >
+                <option value="">All Sources</option>
+                <option value="kaggle">Kaggle</option>
+                <option value="huggingface">Hugging Face</option>
+                <option value="uci">UCI</option>
+                <option value="openml">OpenML</option>
+                <option value="zenodo">Zenodo</option>
+                <option value="figshare">Figshare</option>
+                <option value="github">GitHub</option>
+                <option value="openneuro">OpenNeuro</option>
+                <option value="physionet">PhysioNet</option>
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>File Type</label>
+              <input
+                type="text"
+                placeholder="e.g. csv, json"
+                value={filters.filetype}
+                onChange={(e) => setFilters({ ...filters, filetype: e.target.value })}
+              />
+            </div>
+            <div className="filter-group">
+              <label>Domain</label>
+              <input
+                type="text"
+                placeholder="e.g. medical, nlp"
+                value={filters.domain}
+                onChange={(e) => setFilters({ ...filters, domain: e.target.value })}
+              />
+            </div>
+            <button className="apply-btn" onClick={() => search(0)}>Apply</button>
+          </div>
         </div>
 
         {/* ─── RESULTS ─── */}
@@ -219,6 +266,7 @@ function App() {
 
                 return (
                   <div key={i} className="result-card">
+                    {/* ─── TOP ROW: Quality + License ─── */}
                     <div className="card-top">
                       <span className="quality">
                         <span className="dot"></span> {quality}% Quality
@@ -228,35 +276,27 @@ function App() {
                       )}
                     </div>
 
-                    {/* ─── SOURCE BADGE ─── */}
-                    <div style={{ marginBottom: '6px' }}>
-                      <span style={{
-                        display: 'inline-block',
-                        background: sourceColor,
-                        color: '#000',
-                        padding: '2px 10px',
-                        borderRadius: '10px',
-                        fontSize: '10px',
-                        fontWeight: '700',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px',
-                      }}>
-                        {sourceLabel}
-                      </span>
-                    </div>
-
+                    {/* ─── TITLE ─── */}
                     <h3 className="card-title">{ds.title || 'Untitled'}</h3>
+
+                    {/* ─── DESCRIPTION ─── */}
                     <p className="card-description">
                       {(ds.description || 'No description available.').slice(0, 180)}
                       {(ds.description || '').length > 180 ? '...' : ''}
                     </p>
+
+                    {/* ─── FILE TAGS ─── */}
                     <div className="file-tags">
                       <span className="file-tag">{ds.file_type || 'dataset'}</span>
                       {tags.map((tag, j) => (
                         <span key={j} className="file-tag">{tag}</span>
                       ))}
                     </div>
+
+                    {/* ─── DIVIDER ─── */}
                     <div className="card-divider"></div>
+
+                    {/* ─── METADATA: SIZE + SAMPLES ─── */}
                     <div className="card-meta">
                       <div className="meta-item">
                         <span className="meta-label">SIZE</span>
@@ -267,6 +307,8 @@ function App() {
                         <span className="meta-value">{samplesDisplay}</span>
                       </div>
                     </div>
+
+                    {/* ─── BUTTONS ─── */}
                     <div className="card-buttons">
                       <button
                         className="btn-redirect"
@@ -292,7 +334,7 @@ function App() {
       {/* ─── FLOATING AI WIDGET ─── */}
       <div className="ai-widget">
         <div className="ai-widget-header">
-          <span className="ai-icon">✦</span>
+          <span className="ai-icon"><AIStarIcon /></span>
           <span className="ai-label">NEURO AI</span>
         </div>
         <p className="ai-text">
@@ -301,15 +343,15 @@ function App() {
         </p>
         <div className="ai-input">
           <input type="text" placeholder="I need 10k images of..." />
-          <span className="ai-arrow">→</span>
+          <span className="ai-arrow"><ArrowIcon /></span>
         </div>
       </div>
 
       {/* ─── FOOTER ─── */}
       <footer>
         <div className="footer-left">
-          <div className="footer-logo">NEUROITY AI</div>
-          <p>© 2026 Neuroity AI. Precision engineered for intelligence.</p>
+          <div className="footer-logo">NEUROITY DATA SEARCH</div>
+          <p>© 2026 Neuroity Data Search. Precision engineered for intelligence.</p>
         </div>
         <div className="footer-right">
           <a href="#">Privacy Policy</a>
