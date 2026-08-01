@@ -3,6 +3,7 @@ from app.connectors.base import BaseConnector
 from typing import List, Dict, Any, Optional
 import asyncio
 import os
+import json
 
 class KaggleConnector(BaseConnector):
     """Kaggle API connector"""
@@ -14,8 +15,7 @@ class KaggleConnector(BaseConnector):
         try:
             from kaggle.api.kaggle_api_extended import KaggleApi
             
-            # 🔥 HARDCODE CREDENTIALS HERE (TEMPORARY)
-            import json
+            # 🔥 HARDCODE CREDENTIALS HERE
             kaggle_dir = os.path.join(os.path.expanduser('~'), '.kaggle')
             os.makedirs(kaggle_dir, exist_ok=True)
             
@@ -43,6 +43,7 @@ class KaggleConnector(BaseConnector):
             self.api = None
     
     async def search(self, query: str, limit: int = 10) -> List[Dict[str, Any]]:
+        """Search for datasets on Kaggle"""
         if not self.authenticated or not self.api:
             return self._sample_results(query)
         
